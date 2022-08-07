@@ -21,12 +21,13 @@ on:
 
   push:
     paths:
-      - '${pathFile}'
+      - '.github/workflows/${workflowName}.yml'
+      - '${build}.yml'
     branches:
       - main
 
-  schedule:
-    - cron: 0 16 * * *
+  # schedule:
+  #   - cron: 0 16 * * *
 
 env:
   REPO_URL: https://github.com/gl-inet/gl-infra-builder
@@ -65,7 +66,8 @@ jobs:
         echo $GITHUB_WORKSPACE
         git clone $REPO_URL -b $REPO_BRANCH gl-infra-builder
         ln -sf /workdir/gl-infra-builder $GITHUB_WORKSPACE/gl-infra-builder
-        /bin/cp -rf $GITHUB_WORKSPACE/*.yml /workdir/gl-infra-builder/profiles
+        cd $GITHUB_WORKSPACE
+        [ -e ${build}.yml ] && mv ${build}.yml /workdir/gl-infra-builder/profiles
 
     - name: run setup.py
       run: |
@@ -101,22 +103,6 @@ jobs:
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-
-    - name: Build Packages
-      run: |
-        cd /workdir
-        git clone --depth=1 https://github.com/luochongjun/opkg-make-repo.git
-        cd opkg-make-repo
-        ./make-index /workdir/gl-infra-builder/wlan-ap/openwrt/bin/targets/ipq807x/ipq60xx/packages
-
-    - name: Deploy Packages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        personal_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: ${model}-packages
-        publish_dir: /workdir/gl-infra-builder/wlan-ap/openwrt/bin/targets/ipq807x/ipq60xx/packages
-        user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@github.com'
 
     - name: Check space usage
       if: (!cancelled())

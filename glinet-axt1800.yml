@@ -7,28 +7,36 @@ image: bin/targets/ipq807x/ipq60xx/openwrt-ipq807x-glinet_axt1800-squashfs-sysup
 feeds:
   - name: ipq807x
     path: ../../feeds/ipq807x
+  - name: wifi_ax
+    path: ../../feeds/wifi-ax
   - name: gl_feeds_common
     uri: https://github.com/gl-inet/gl-feeds.git
-    revision: 06f41ac79c434043e7dd15c3ab4bb09930ddfaf3
+    revision: 6d36fa8b49061674c709c40b8c3ed5881be3190a
   - name: luci
     uri: https://github.com/openwrt/luci.git
     revision: 1c3b32dc1bec15e3076a447762b1c4f94eb75fb7
-  - name: immortalwrt
+  - name: open_app_filter
+    uri: https://github.com/destan19/OpenAppFilter.git
+    branch: oaf-5.1.0
+    revision: 04b701357c271a1bf97afa5dbfbfd02f4861aa25
+  - name: immortalwrt_luci
     uri: https://github.com/immortalwrt/luci.git
     branch: openwrt-21.02
-    revision: 2de17545a865791b247dcad1f23922b033cd670c
-  - name: small
+    revision: 081ae7d4e18d6795a3c906bd793b5db41035baaa
+  - name: kenzok8_packages
+    uri: https://github.com/kenzok8/openwrt-packages.git
+    branch: master
+    revision: 729afa89a828b6908cf98f6d69474297a5fa945d
+  - name: kenzok8_small
     uri: https://github.com/kenzok8/small.git
     branch: master
-    revision: 57ea69958b1d98029a6a3898a64a7c34a5a5e5cb
-include:
-  - wifi-ax
+    revision: 99791eed039d98056be82b4ecc57b20c6ac322b6
+include: []
 packages:
   - kmod-hwmon-pwmfan
+  - wireless-regdb
   - wget-ssl
-  - dnsmasq-full
-  - luci-app-commands
-  - luci-app-mwan3
+  - kmod-wireguard-backport
   - luci-theme-argon
   - luci-app-argon-config
   - luci-app-ramfree
@@ -36,12 +44,9 @@ packages:
   - luci-app-diskman
   - luci-app-smartdns
   - luci-app-openclash
-  - luci-app-uugamebooster
-  - luci-app-ssr-plus
-  - luci-app-passwall
   - luci-app-aria2
   - luci-app-zerotier
   - luci-app-turboacc
   - luci-app-xlnetacc
-diffconfig: |
-  CONFIG_KERNEL_IPQ_MEM_PROFILE=0
+  - luci-app-appfilter
+  - luci-app-cpufreq
